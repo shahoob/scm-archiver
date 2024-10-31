@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "scm-archiver"
+version = "0.1.0"
+description = ""
+authors = ["Shehab Ali Tweel <shehabtweel@gmail.com>"]
+readme = "README.md"
+
+
+[tool.poetry.scripts]
+scm-archiver = "scm_archiver.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+typer = "^0.12.5"
+requests = "^2.32.3"
+rich = "^13.9.3"
+pydantic = "^2.9.2"
+alive-progress = "^3.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
