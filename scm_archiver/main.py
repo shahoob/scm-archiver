@@ -30,7 +30,7 @@ class Song(BaseModel):
 @app.command()
 def main(
     download_path: Annotated[Path, typer.Argument(
-        default_factory=default_path_factory, dir_okay=True, exists=True,
+        default_factory=default_path_factory, dir_okay=True,
         help="Path to the directory where the archive will reside."
     )],
     reuse_cached_info: Annotated[bool, typer.Option(
@@ -82,6 +82,7 @@ def main(
                 fetch_file = True
             if fetch_file:
                 r_game = requests.get(f"https://smashcustommusic.net/json/game/{game['game_id']}")
+                r_game.raise_for_status()
                 _game = r_game.json()
                 game_info_path.parent.mkdir(parents=True, exist_ok=True)
                 with open(game_info_path, "w") as f:
@@ -140,7 +141,7 @@ def main(
                 bar.text = f"-> [{game.id}] \"{game.name}\""
                 f.write(f"# {game.name}\n")
                 if game.has_game_banner:
-                    f.write(f"# banner\nhttps://smashcustommusic.net/logos/{game.id}.png\n" +
+                    f.write(f"https://smashcustommusic.net/logos/{game.id}.png\n" +
                     f"  dir={download_path / str(game.id)}\n" +
                      "  out=banner.png\n\n"
                     )
@@ -148,13 +149,13 @@ def main(
                 for i, song in enumerate(game.songs):
                     # song_urls.append(f"https://smashcustommusic.net/brstm/{song.id}?noIncrement=1")
                     bar.text = f"-> [{game.id}] ({i+1}/{len(game.songs)}) \"{game.name}\""
-                    f.write(f"# {song.name}\nhttps://smashcustommusic.net/brstm/{song.id}?noIncrement=1\n" +
+                    f.write(f"https://smashcustommusic.net/brstm/{song.id}?noIncrement=1\n" +
                     f"  dir={download_path / str(game.id) / str(song.id)}\n" +
                     (f"  out={song.name}.brstm\n\n" if auto_filename_aria2 else "\n")
                     )
                     if use_aria2_asap:
-                        f.write(f"# {song.name} data\nhttps://smashcustommusic.net/json/song/{song.id}\n" +
+                        f.write(f"https://smashcustommusic.net/json/song/{song.id}\n" +
                             f"  dir={download_path / str(game.id) / str(song.id)}\n" +
-                             "  out=data.json"
+                             "  out=data.json\n\n"
                         )
                     bar()
